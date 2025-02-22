@@ -75,7 +75,6 @@ async function run() {
       });
 
       // app.delete("/tasks/:id",async (req, res) => {
-      //   const id = req.params.id;
 
       // PUT - Update a task by ID
 app.put("/tasks/:id", async (req, res) => {
