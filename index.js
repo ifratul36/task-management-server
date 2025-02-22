@@ -49,9 +49,43 @@ async function run() {
         res.send(result);
       });
 
+      // PUT - Update a task by ID
+app.put("/tasks/:id", async (req, res) => {
+    const id = req.params.id; // Get the task ID from the URL parameter
+    const updatedTask = req.body; // Get the updated task data from the request body
+    
+    // Construct the filter and update objects
+    const filter = { _id: new ObjectId(id) };
+    const updateDoc = {
+      $set: updatedTask, // Set the new task data
+    };
+  
+    try {
+      // Perform the update operation
+      const result = await tasksCollection.updateOne(filter, updateDoc);
+  
+      // Check if a task was updated
+      if (result.modifiedCount === 0) {
+        return res.status(404).send({ message: "Task not found or no changes made." });
+      }
+  
+      res.send({ message: "Task updated successfully" });
+    } catch (error) {
+      console.error("Error updating task:", error);
+      res.status(500).send({ message: "Failed to update task" });
+    }
+  });
+  
+
     // users related api
     app.post("/users", async (req, res) => {
       const user = req.body;
+
+      const query = {email: user.email}
+      const existingUser = await usersCollection.findOne(query);
+      if(existingUser){
+        return res.send({message: 'user already exits',insertedId: null })
+      }
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
