@@ -77,7 +77,6 @@ async function run() {
       // app.delete("/tasks/:id",async (req, res) => {
       //   const id = req.params.id;
       //   const query = { _id: new ObjectId(id) };
-      //   const result = await tasksCollection.deleteOne(query);
 
       // PUT - Update a task by ID
 app.put("/tasks/:id", async (req, res) => {
