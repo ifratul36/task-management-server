@@ -62,12 +62,12 @@ async function run() {
       });
   
       // GET - Get all tasks
-      app.get("/tasks",verifyToken, async (req, res) => {
+      app.get("/tasks", async (req, res) => {
         const tasks = await tasksCollection.find().toArray();
         res.send(tasks);
       });
 
-      app.delete("/tasks/:id",verifyToken,async (req, res) => {
+      app.delete("/tasks/:id",async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
         const result = await tasksCollection.deleteOne(query);
