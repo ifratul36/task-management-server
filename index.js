@@ -74,6 +74,13 @@ async function run() {
         res.send(result);
       });
 
+      // app.delete("/tasks/:id",async (req, res) => {
+      //   const id = req.params.id;
+      //   const query = { _id: new ObjectId(id) };
+      //   const result = await tasksCollection.deleteOne(query);
+      //   res.send(result);
+      // });
+
       // PUT - Update a task by ID
 app.put("/tasks/:id", async (req, res) => {
     const id = req.params.id; // Get the task ID from the URL parameter
