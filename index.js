@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
 const port = process.env.PORT || 3000;
 
 // middleware
@@ -28,6 +29,30 @@ async function run() {
     const tasksCollection = client.db("taskDB").collection("tasks");
   
 
+        // jwt related api
+        app.post("/jwt", async (req, res) => {
+          const user = req.body;
+          const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: "1d",
+          });
+          res.send({ token });
+        });
+    
+        //  middleware
+        const verifyToken = (req, res, next) => {
+          if (!req.headers.authorization) {
+            return res.status(401).send({ message: "forbidden access" });
+          }
+          const token = req.headers.authorization.split(" ")[1];
+          jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+            if (err) {
+              return res.status(401).send({ message: "forbidden access" });
+            }
+            req.decoded = decoded;
+            next();
+          });
+        };
+
       
       // POST - Add a new task
       app.post("/tasks", async (req, res) => {
@@ -37,12 +62,12 @@ async function run() {
       });
   
       // GET - Get all tasks
-      app.get("/tasks", async (req, res) => {
+      app.get("/tasks",verifyToken, async (req, res) => {
         const tasks = await tasksCollection.find().toArray();
         res.send(tasks);
       });
 
-      app.delete("/tasks/:id",async (req, res) => {
+      app.delete("/tasks/:id",verifyToken,async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
         const result = await tasksCollection.deleteOne(query);
